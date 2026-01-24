@@ -1,0 +1,11 @@
+#### TODO
+- Implement Limelight
+- Implement Commands for Auto
+    - Wait
+    - Shoot
+    - Ingest
+- Implement serializer subsystem
+- Implement ingest subsystem
+- Implement flywheel subsystem
+- Implement hood subsystem
+- Implement turret subsystem

@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.5842413487133977,
+        "y": 5.946379769299024
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5842413487133975,
+        "y": 5.946379769299024
+      },
+      "isLocked": false,
+      "linkedName": "Ingest 1"
+    },
+    {
+      "anchor": {
+        "x": 2.998615794143744,
+        "y": 4.779432120674357
+      },
+      "prevControl": {
+        "x": 1.9986157941437441,
+        "y": 4.779432120674357
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Shooting Spot 1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -35.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
