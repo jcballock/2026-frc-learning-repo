@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -15,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
@@ -143,19 +143,9 @@ public class ShootOnTheMoveCommand extends Command {
     double adjustedHood = Math.acos(ratio);
 
     // 7. SET OUTPUTS
-    System.out.println(
-        "Turret Angle: "
-            + Degrees.of(turretAngle.getDegrees())
-            + " Speed: "
-            + MetersPerSecond.of(totalVelocity)
-            + " Hood Angle: "
-            + Radians.of(adjustedHood)
-            + " Dist (m): "
-            + dist
-            + " Ideal Speed: "
-            + targetHorizFromHood
-            + " Robot Speed: "
-            + robotSpeed);
+    SmartDashboard.putNumber("Target/Turret Angle", turretAngle.getDegrees());
+    SmartDashboard.putNumber("Target/Hood Angle", Math.toDegrees(adjustedHood));
+    SmartDashboard.putNumber("Target/RPM", adjustedRpm);
 
     // TODO (jballock): Respect hard limits / use proper commands
     turretSubsystem.setAngleDirect(Degrees.of(turretAngle.getDegrees()));

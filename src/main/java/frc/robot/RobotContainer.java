@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.ShootAndMoveCommandGroup;
+import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -150,6 +150,15 @@ public class RobotContainer {
         drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
 
+    Command shootOnMoveCommand =
+        new ShootOnTheMoveCommand(
+            shooter.turret,
+            shooter.hood,
+            shooter.flywheel,
+            drivebase::getPose,
+            drivebase::getFieldVelocity,
+            new Pose2d(4.6, 4, Rotation2d.fromDegrees(0)));
+
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else {
@@ -168,20 +177,14 @@ public class RobotContainer {
           .start()
           .onTrue(
               Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
+      driverXbox.a().whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox
-          .button(2)
+          .b()
           .whileTrue(
               Commands.runEnd(
                   () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                   () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
-      driverXbox
-          .a()
-          .whileTrue(
-              new ShootAndMoveCommandGroup(
-                  shooter,
-                  drivebase,
-                  driverXbox)); // TODO (jballock): This should be non-driver controller?
+      driverXbox.y().whileTrue(shootOnMoveCommand);
     }
     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(
@@ -193,7 +196,7 @@ public class RobotContainer {
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
