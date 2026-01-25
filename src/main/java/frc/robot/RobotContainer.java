@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -36,8 +38,14 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase =
+  public SwerveSubsystem drivebase =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+
+  // Photon Vision subsystem
+  public VisionSubsystem vision = new VisionSubsystem();
+
+  // Super class for hood, turret, and flywheel
+  public ShooterSubsystem shooter = new ShooterSubsystem(vision);
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
   // selection of desired auto
@@ -107,8 +115,7 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
 
     // Set the default auto
-    autoChooser.setDefaultOption(
-        "Straight Line", drivebase.getAutonomousCommand("New Auto"));
+    autoChooser.setDefaultOption("Straight Line", drivebase.getAutonomousCommand("New Auto"));
 
     // Goes to shooting point and stops
     autoChooser.addOption("Simple Shooter", drivebase.getAutonomousCommand("Simple Shooter Auto"));
