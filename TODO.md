@@ -5,18 +5,11 @@
     - Ingest
 - Implement Commands for Teleop
     - Hub shot
+    - ~~Moving Hub Shot~~
     - Pass shot
 - Implement serializer subsystem
     - Map buttons? (connected to shooting button?)
 - Implement ingest subsystem
     - Generate subsystem
     - Map buttons
-- Implement flywheel subsystem
-    - Map buttons
-    - Tune
-- Implement hood subsystem
-    - Map buttons
-    - Tune
-- Implement turret subsystem
-    - Map buttons
-    - Tune
+- Refactor constants
