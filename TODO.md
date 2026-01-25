@@ -1,11 +1,22 @@
 #### TODO
-- Implement Photon
 - Implement Commands for Auto
     - Wait
     - Shoot
     - Ingest
+- Implement Commands for Teleop
+    - Hub shot
+    - Pass shot
 - Implement serializer subsystem
+    - Map buttons? (connected to shooting button?)
 - Implement ingest subsystem
+    - Generate subsystem
+    - Map buttons
 - Implement flywheel subsystem
+    - Map buttons
+    - Tune
 - Implement hood subsystem
+    - Map buttons
+    - Tune
 - Implement turret subsystem
+    - Map buttons
+    - Tune
