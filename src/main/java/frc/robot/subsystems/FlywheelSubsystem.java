@@ -12,8 +12,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -31,30 +30,32 @@ import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.local.SparkWrapper;
+import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class FlywheelSubsystem extends SubsystemBase {
 
   private final Distance flywheelDiameter = Inches.of(4);
-  private final SparkMax flywheelMotor = new SparkMax(1, MotorType.kBrushless);
+  private final TalonFX flywheelMotor = new TalonFX(37);
 
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
           .withClosedLoopController(
-              0.00016541, 0, 0, RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
-          .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+              1.5, 0, 0.05, RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
+          .withSimClosedLoopController(
+              1.5, 0, 0.05, RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
           .withIdleMode(MotorMode.COAST)
           .withTelemetry("FlywheelMotor", TelemetryVerbosity.HIGH)
           .withStatorCurrentLimit(Amps.of(40))
           .withMotorInverted(false)
           .withClosedLoopRampRate(Seconds.of(0.25))
           .withOpenLoopRampRate(Seconds.of(0.25))
-          .withFeedforward(new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
-          .withSimFeedforward(new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
+          .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+          .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
           .withControlMode(ControlMode.CLOSED_LOOP);
 
   private final SmartMotorController motor =
-      new SparkWrapper(flywheelMotor, DCMotor.getNEO(1), motorConfig);
+      new TalonFXWrapper(flywheelMotor, DCMotor.getKrakenX60(1), motorConfig);
 
   private final FlyWheelConfig flywheelConfig =
       new FlyWheelConfig(motor)
@@ -112,5 +113,9 @@ public class FlywheelSubsystem extends SubsystemBase {
     motor.setVelocity(
         RotationsPerSecond.of(
             speed.in(MetersPerSecond) / flywheelDiameter.times(Math.PI).in(Meters)));
+  }
+
+  public void setRPMDirect(AngularVelocity rpm) {
+    motor.setVelocity(rpm);
   }
 }

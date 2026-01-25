@@ -12,9 +12,9 @@ import java.util.function.Supplier;
 public class ShooterSubsystem {
   // Holds and manages turret, hood and flywheel
 
-  private final TurretSubsystem turret = new TurretSubsystem();
-  private final HoodSubsystem hood = new HoodSubsystem();
-  private final FlywheelSubsystem flywheel = new FlywheelSubsystem();
+  public final TurretSubsystem turret = new TurretSubsystem();
+  public final HoodSubsystem hood = new HoodSubsystem();
+  public final FlywheelSubsystem flywheel = new FlywheelSubsystem();
 
   private Supplier<AngularVelocity> flywheelVelocitySupplier = () -> DegreesPerSecond.of(0);
 
@@ -26,25 +26,25 @@ public class ShooterSubsystem {
     // the closest tag, can be reused and filtered with tag ids to get it to point
     // on the hub
 
-    hood.setDefaultCommand(
-        hood.setDutyCycle(
-            () -> {
-              var results = vision.getClosestTag();
-              if (results.isPresent()) {
-                return hoodPIDCOntroller.calculate(results.get().skew, 0);
-              }
-              return 0.0;
-            }));
+    // hood.setDefaultCommand(
+    //     hood.setDutyCycle(
+    //         () -> {
+    //           var results = vision.getClosestTag();
+    //           if (results.isPresent()) {
+    //             return hoodPIDCOntroller.calculate(results.get().skew, 0);
+    //           }
+    //           return 0.0;
+    //         }));
 
-    turret.setDefaultCommand(
-        turret.setDutyCycle(
-            () -> {
-              var results = vision.getClosestTag();
-              if (results.isPresent()) {
-                return turretPIDCOntroller.calculate(results.get().yaw, 0);
-              }
-              return 0.0;
-            }));
+    // turret.setDefaultCommand(
+    //     turret.setDutyCycle(
+    //         () -> {
+    //           var results = vision.getClosestTag();
+    //           if (results.isPresent()) {
+    //             return turretPIDCOntroller.calculate(results.get().yaw, 0);
+    //           }
+    //           return 0.0;
+    //         }));
   }
 
   public Command aimAt(Angle hoodAngle, Angle turretAngle) {

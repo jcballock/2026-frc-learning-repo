@@ -10,7 +10,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,15 +25,15 @@ import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.remote.TalonFXSWrapper;
+import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class TurretSubsystem extends SubsystemBase {
-  private final TalonFXS turretMotor = new TalonFXS(1);
+  private final TalonFX turretMotor = new TalonFX(36);
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
+              45, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
           // Configure Motor and Mechanism properties
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
           .withIdleMode(MotorMode.BRAKE)
@@ -45,15 +45,13 @@ public class TurretSubsystem extends SubsystemBase {
           .withClosedLoopRampRate(Seconds.of(0.25))
           .withOpenLoopRampRate(Seconds.of(0.25));
   private final SmartMotorController turretSMC =
-      new TalonFXSWrapper(turretMotor, DCMotor.getNEO(1), motorConfig);
+      new TalonFXWrapper(turretMotor, DCMotor.getKrakenX60(1), motorConfig);
 
   private final PivotConfig turretConfig =
       new PivotConfig(turretSMC)
           .withStartingPosition(Degrees.of(0)) // Starting position of the Pivot
-          .withWrapping(Degrees.of(0), Degrees.of(360)) // Wrapping enabled bc the pivot can spin
-          // infinitely
-          .withHardLimit(Degrees.of(0), Degrees.of(720)) // Hard limit bc wiring prevents infinite
-          // spinning
+          .withHardLimit(Degrees.of(-135), Degrees.of(135))
+          .withSoftLimits(Degrees.of(-130), Degrees.of(130))
           .withTelemetry("TurretMech", TelemetryVerbosity.HIGH) // Telemetry
           .withMOI(Meters.of(0.25), Pounds.of(4)); // MOI Calculation
 

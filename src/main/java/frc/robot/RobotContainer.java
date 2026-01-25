@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ShootAndMoveCommandGroup;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -174,6 +175,13 @@ public class RobotContainer {
               Commands.runEnd(
                   () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                   () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+      driverXbox
+          .a()
+          .whileTrue(
+              new ShootAndMoveCommandGroup(
+                  shooter,
+                  drivebase,
+                  driverXbox)); // TODO (jballock): This should be non-driver controller?
     }
     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(
