@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ShootOnTheMoveCommand;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -47,6 +50,9 @@ public class RobotContainer {
 
   // Super class for hood, turret, and flywheel
   public ShooterSubsystem shooter = new ShooterSubsystem(vision);
+
+  // Class for intake
+  public IntakeSubsystem intake = new IntakeSubsystem();
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
   // selection of desired auto
@@ -156,8 +162,7 @@ public class RobotContainer {
             shooter.hood,
             shooter.flywheel,
             drivebase::getPose,
-            drivebase::getFieldVelocity,
-            new Pose2d(4.6, 4, Rotation2d.fromDegrees(0)));
+            drivebase::getFieldVelocity);
 
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
@@ -185,6 +190,10 @@ public class RobotContainer {
                   () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                   () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
       driverXbox.y().whileTrue(shootOnMoveCommand);
+      driverXbox
+          .rightBumper()
+          .onFalse(intake.retract())
+          .whileTrue(intake.intake(Degrees.of(-20.0)));
     }
     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(
@@ -200,7 +209,7 @@ public class RobotContainer {
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      // driverXbox.rightBumper().onTrue(Commands.none());
     }
   }
 

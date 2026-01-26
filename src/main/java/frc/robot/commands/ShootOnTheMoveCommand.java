@@ -16,9 +16,11 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
+import frc.robot.util.AllianceFlipUtil;
 import java.util.function.Supplier;
 
 /**
@@ -37,9 +39,6 @@ public class ShootOnTheMoveCommand extends Command {
 
   /** Current field-oriented chassis speeds. */
   private final Supplier<ChassisSpeeds> fieldOrientedChassisSpeeds;
-
-  /** Pose to shoot at. */
-  private final Pose2d goalPose;
 
   // Tuned Constants
   // TODO (jballock): Tune this
@@ -78,16 +77,14 @@ public class ShootOnTheMoveCommand extends Command {
       HoodSubsystem hood,
       FlywheelSubsystem flyWheel,
       Supplier<Pose2d> currentPose,
-      Supplier<ChassisSpeeds> fieldOrientedChassisSpeeds,
-      Pose2d goal) {
+      Supplier<ChassisSpeeds> fieldOrientedChassisSpeeds) {
     turretSubsystem = turret;
     hoodSubsystem = hood;
     flywheelSubsystem = flyWheel;
     robotPose = currentPose;
     this.fieldOrientedChassisSpeeds = fieldOrientedChassisSpeeds;
-    this.goalPose = goal;
 
-    setName("Shoot on the move");
+    setName("Shoot at hub on the move");
   }
 
   @Override
@@ -100,6 +97,9 @@ public class ShootOnTheMoveCommand extends Command {
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     // YASS did not come up with this
     // -------------------------------------------------------
+
+    // Hub goal pose
+    Pose2d goalPose = AllianceFlipUtil.apply(FieldConstants.HUB);
 
     var robotSpeed = fieldOrientedChassisSpeeds.get();
     // 1. LATENCY COMP

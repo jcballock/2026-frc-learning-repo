@@ -4,9 +4,28 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import swervelib.math.Matter;
+import yams.gearing.GearBox;
+import yams.gearing.MechanismGearing;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -34,6 +53,14 @@ public final class Constants {
   //    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
   //  }
 
+  public static final class FieldConstants {
+
+    // Hold time on motor brakes when disabled
+    public static final Pose2d HUB = new Pose2d(4.6, 4, Rotation2d.fromDegrees(0));
+    public static final double FIELD_LENGTH_M = Units.inchesToMeters(651.22);
+    public static final double FIELD_WIDTH_M = Units.inchesToMeters(317.69);
+  }
+
   public static final class DrivebaseConstants {
 
     // Hold time on motor brakes when disabled
@@ -47,5 +74,97 @@ public final class Constants {
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 6;
+  }
+
+  public static class HoodConstants {
+    // ID
+    public static final int ID = 35;
+
+    // Hood Properties
+    public static final Mass MASS = Mass.ofBaseUnits(2, Pounds);
+    public static final Distance LENGTH = Distance.ofBaseUnits(7, Inches);
+    public static final MomentOfInertia M_OF_INERTIA =
+        MomentOfInertia.ofBaseUnits(0.00488, KilogramSquareMeters);
+    public static final Angle START_ANGLE = Angle.ofBaseUnits(0, Degrees);
+    public static final Angle MIN_ANGLE = Angle.ofBaseUnits(0, Degrees);
+    public static final Angle MAX_ANGLE = Angle.ofBaseUnits(120, Degrees);
+    public static final MechanismGearing GEARING =
+        new MechanismGearing(GearBox.fromReductionStages(3, 4));
+
+    // Hood PID
+    public static final ProfiledPIDController PID_CONTROLLER =
+        new ProfiledPIDController(
+            20.0,
+            0,
+            0,
+            new Constraints(
+                DegreesPerSecond.of(180).in(RotationsPerSecond),
+                DegreesPerSecondPerSecond.of(90).in(RotationsPerSecondPerSecond)));
+  }
+
+  public static class TurretConstants {
+    // ID
+    public static final int ID = 36;
+
+    // Turret Properties
+    public static final Mass MASS = Mass.ofBaseUnits(2, Pounds);
+    public static final Distance LENGTH = Distance.ofBaseUnits(7, Inches);
+    public static final MomentOfInertia M_OF_INERTIA =
+        MomentOfInertia.ofBaseUnits(0.00956, KilogramSquareMeters);
+    public static final Angle START_ANGLE = Angle.ofBaseUnits(0, Degrees);
+    public static final Angle MIN_ANGLE = Angle.ofBaseUnits(-135, Degrees);
+    public static final Angle MAX_ANGLE = Angle.ofBaseUnits(135, Degrees);
+    public static final Angle SOFT_MIN_ANGLE = Angle.ofBaseUnits(-130, Degrees);
+    public static final Angle SOFT_MAX_ANGLE = Angle.ofBaseUnits(130, Degrees);
+    public static final MechanismGearing GEARING =
+        new MechanismGearing(GearBox.fromReductionStages(3, 4));
+
+    // Turret PID
+    public static final ProfiledPIDController PID_CONTROLLER =
+        new ProfiledPIDController(
+            45,
+            0,
+            0,
+            new Constraints(
+                DegreesPerSecond.of(180).in(RotationsPerSecond),
+                DegreesPerSecondPerSecond.of(120).in(RotationsPerSecondPerSecond)));
+  }
+
+  public static class FlywheelConstants {
+    // ID
+    public static final int ID = 37;
+
+    // TODO
+  }
+
+  public static class IntakeArmConstants {
+    // ID
+    public static final int ID = 38;
+
+    // Intake Arm Properties
+    public static final Mass MASS = Mass.ofBaseUnits(7, Pounds);
+    public static final Distance LENGTH = Distance.ofBaseUnits(14.5, Inches);
+    public static final MomentOfInertia M_OF_INERTIA =
+        MomentOfInertia.ofBaseUnits(0.01438, KilogramSquareMeters);
+    public static final Angle START_ANGLE = Angle.ofBaseUnits(90, Degrees);
+    public static final Angle MIN_ANGLE = Angle.ofBaseUnits(-20, Degrees);
+    public static final Angle MAX_ANGLE = Angle.ofBaseUnits(100, Degrees);
+    public static final MechanismGearing GEARING =
+        new MechanismGearing(GearBox.fromReductionStages(4, 4));
+
+    // Intake Arm PID
+    public static final ProfiledPIDController PID_CONTROLLER =
+        new ProfiledPIDController(
+            10.0,
+            0,
+            0,
+            new Constraints(
+                DegreesPerSecond.of(360).in(RotationsPerSecond),
+                DegreesPerSecondPerSecond.of(280).in(RotationsPerSecondPerSecond)));
+  }
+
+  public static class IntakeConstants {
+    // ID
+    public static final int ID = 39;
   }
 }
