@@ -7,9 +7,11 @@
     - Hub shot
     - ~~Moving Hub Shot~~
     - Pass shot
-- Implement serializer subsystem
-    - Map buttons? (connected to shooting button?)
-- Implement ingest subsystem
-    - Generate subsystem
+- Implement serializer + kicker subsystem
     - Map buttons
+- Implement ingest subsystem
+    - ~~Generate subsystem~~
+    - ~~Map buttons~~
+    - Outtake?
 - Refactor constants
+- Vision odometry into swerve subsystem
