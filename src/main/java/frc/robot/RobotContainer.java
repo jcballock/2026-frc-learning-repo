@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.SerializerSubystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -53,6 +54,9 @@ public class RobotContainer {
 
   // Class for intake
   public IntakeSubsystem intake = new IntakeSubsystem();
+
+  // Class for intake
+  public SerializerSubystem serializer = new SerializerSubystem();
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
   // selection of desired auto
@@ -194,16 +198,58 @@ public class RobotContainer {
           .rightBumper()
           .onFalse(intake.retract())
           .whileTrue(intake.intake(Degrees.of(-20.0)));
+      driverXbox
+          .x()
+          .whileTrue(serializer.serializeAndKick(1.0))
+          .onFalse(serializer.stopSerialize());
+
+      // Manual turret control
+      driverXbox
+          .rightTrigger()
+          .onFalse(shooter.turret.setDutyCycle(0.0))
+          .whileTrue(shooter.turret.setDutyCycle(0.125));
+      driverXbox
+          .leftTrigger()
+          .onFalse(shooter.turret.setDutyCycle(0.0))
+          .whileTrue(shooter.turret.setDutyCycle(-0.125));
     }
     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(
           driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
-      driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.leftBumper().onTrue(Commands.none());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      // Buttons for intake testing
+      driverXbox.a().onFalse(intake.rawIntakeControl(0.0)).whileTrue(intake.rawIntakeControl(0.25));
+      driverXbox.b().onFalse(intake.rawArmControl(0.0)).whileTrue(intake.rawArmControl(0.125));
+
+      // Button for serializer
+      driverXbox.x().onFalse(serializer.stopSerialize()).whileTrue(serializer.serialize(0.25));
+
+      // Buttons for turret
+      driverXbox
+          .rightBumper()
+          .onFalse(shooter.turret.setDutyCycle(0.0))
+          .whileTrue(shooter.turret.setDutyCycle(0.125));
+      driverXbox
+          .leftBumper()
+          .onFalse(shooter.turret.setDutyCycle(0.0))
+          .whileTrue(shooter.turret.setDutyCycle(-0.125));
+
+      // Button for flywheel
+      driverXbox
+          .y()
+          .onFalse(shooter.flywheel.setDutyCycle(0.0))
+          .whileTrue(shooter.flywheel.setDutyCycle(0.25));
+
+      // Button for hood
+      driverXbox
+          .rightTrigger()
+          .onFalse(shooter.hood.setDutyCycle(0.0))
+          .whileTrue(shooter.hood.setDutyCycle(0.125));
+      driverXbox
+          .leftTrigger()
+          .onFalse(shooter.hood.setDutyCycle(0.0))
+          .whileTrue(shooter.hood.setDutyCycle(-0.125));
+
     } else {
       // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.start().whileTrue(Commands.none());

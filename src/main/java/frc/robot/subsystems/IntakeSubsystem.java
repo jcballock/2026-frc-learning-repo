@@ -81,6 +81,14 @@ public class IntakeSubsystem extends SubsystemBase {
     return runOnce(() -> intakeMotor.set(1.0)).andThen(intakeArm.setAngle(angle));
   }
 
+  public Command rawIntakeControl(double speed) {
+    return runOnce(() -> intakeMotor.set(speed));
+  }
+
+  public Command rawArmControl(double speed) {
+    return runOnce(() -> intakeArmMotor.set(speed));
+  }
+
   public Command intake(Supplier<Angle> angleSupplier) {
     return runOnce(() -> intakeMotor.set(1.0)).andThen(intakeArm.setAngle(angleSupplier));
   }

@@ -6,12 +6,14 @@
 - Implement Commands for Teleop
     - Hub shot
     - ~~Moving Hub Shot~~
-    - Pass shot
-- Implement serializer + kicker subsystem
-    - Map buttons
-- Implement ingest subsystem
+    - Pass shot (using choosers?)
+    - ~~Manual turret control?~~
+- ~~Implement serializer + kicker subsystem~~
+    - ~~Map buttons~~
+- ~~Implement ingest subsystem~~
     - ~~Generate subsystem~~
     - ~~Map buttons~~
-    - Outtake?
+    - ~~Outtake?~~
 - Refactor constants
 - Vision odometry into swerve subsystem
+- ~~Test mode~~
