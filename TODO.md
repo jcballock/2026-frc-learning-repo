@@ -4,7 +4,7 @@
     - Shoot
     - Ingest
 - Implement Commands for Teleop
-    - Hub shot
+    - Hub shot based on vision????
     - ~~Moving Hub Shot~~
     - Pass shot (using choosers?)
     - ~~Manual turret control?~~
@@ -15,5 +15,5 @@
     - ~~Map buttons~~
     - ~~Outtake?~~
 - Refactor constants
-- Vision odometry into swerve subsystem
+- ~~Vision odometry into swerve subsystem~~
 - ~~Test mode~~

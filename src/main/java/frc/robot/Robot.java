@@ -4,11 +4,15 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.photonvision.EstimatedRobotPose;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,6 +21,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
+
+  private static final double kSimLoopPeriod = 0.004; // 4 ms
+  private Notifier m_simNotifier = null;
+  private double m_lastSimTime;
 
   private static Robot instance;
   private Command m_autonomousCommand;
@@ -68,7 +76,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     if (isSimulation()) {
-      m_robotContainer.vision.updateVisionPoseSim(m_robotContainer.drivebase.getPose());
+      m_robotContainer.vision.updateVisionPoseSim(m_robotContainer.drivebase.getState().Pose);
     }
   }
 
@@ -123,7 +131,14 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    // Get last estimated global pose
+    EstimatedRobotPose pose = m_robotContainer.vision.getLatestPose();
+    if (pose != null) {
+      m_robotContainer.drivebase.addVisionMeasurement(
+          pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+    }
+  }
 
   @Override
   public void testInit() {
@@ -137,7 +152,23 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    m_lastSimTime = Utils.getCurrentTimeSeconds();
+
+    /* Run simulation at a faster rate so PID gains behave more reasonably */
+    m_simNotifier =
+        new Notifier(
+            () -> {
+              final double currentTime = Utils.getCurrentTimeSeconds();
+              double deltaTime = currentTime - m_lastSimTime;
+              m_lastSimTime = currentTime;
+
+              /* Use the measured time delta, get battery voltage from WPILib */
+              m_robotContainer.drivebase.updateSimState(
+                  deltaTime, RobotController.getBatteryVoltage());
+            });
+    m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

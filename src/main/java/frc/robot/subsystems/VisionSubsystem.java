@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -37,8 +36,7 @@ public class VisionSubsystem extends SubsystemBase {
   SimCameraProperties cameraProp = new SimCameraProperties();
   PhotonCameraSim cameraSim;
 
-  private Pose3d latestPose3d = new Pose3d();
-  private Pose2d latestPose2d = new Pose2d();
+  private EstimatedRobotPose latestPose = null;
 
   public VisionSubsystem() {
     if (RobotBase.isSimulation()) {
@@ -75,9 +73,8 @@ public class VisionSubsystem extends SubsystemBase {
                 if (visionEst.isEmpty()) {
                   visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
                 }
-                if (visionEst.isPresent()) {
-                  latestPose3d = visionEst.get().estimatedPose;
-                  latestPose2d = latestPose3d.toPose2d();
+                if (visionEst.isPresent() && visionEst.get() != latestPose) {
+                  latestPose = visionEst.get();
                 }
               }
             });
@@ -89,12 +86,8 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
-  public Pose2d getEstimatedGlobalPose2d() {
-    return latestPose2d;
-  }
-
-  public Pose3d getEstimatedGlobalPose3d() {
-    return latestPose3d;
+  public EstimatedRobotPose getLatestPose() {
+    return latestPose;
   }
 
   public Optional<PhotonTrackedTarget> getClosestTag() {
