@@ -4,9 +4,8 @@
     - Shoot
     - Ingest
 - Implement Commands for Teleop
-    - Hub shot based on vision????
     - ~~Moving Hub Shot~~
-    - Pass shot (using choosers?)
+    - ~~Pass shot (using choosers?)~~
     - ~~Manual turret control?~~
 - ~~Implement serializer + kicker subsystem~~
     - ~~Map buttons~~
@@ -17,3 +16,6 @@
 - Refactor constants
 - ~~Vision odometry into swerve subsystem~~
 - ~~Test mode~~
+- How to handle vision on a turret (counter measuring turret angle vs robot pose?)
+    - Probably just use static camera
+- Add maple sim for better simulation

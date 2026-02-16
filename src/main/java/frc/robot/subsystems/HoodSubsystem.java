@@ -1,16 +1,19 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.Constants.TurretConstants;
 import java.util.function.Supplier;
 import yams.mechanisms.config.ArmConfig;
 import yams.mechanisms.positional.Arm;
@@ -59,7 +62,13 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   public void setAngleDirect(Angle angle) {
-    hoodSMC.setPosition(angle);
+    double clampedDegrees =
+        MathUtil.clamp(
+            angle.in(Degrees),
+            TurretConstants.MIN_ANGLE.in(Degrees),
+            TurretConstants.MAX_ANGLE.in(Degrees));
+
+    hoodSMC.setPosition(Degrees.of(clampedDegrees));
   }
 
   public Command setAngle(Supplier<Angle> angleSupplier) {

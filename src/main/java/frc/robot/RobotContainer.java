@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.generated.SwerveTunerConstants;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -27,6 +29,7 @@ import frc.robot.subsystems.SerializerSubystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.AllianceFlipUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -76,6 +79,8 @@ public class RobotContainer {
   // selection of desired auto
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+  private final SendableChooser<Pose2d> passTargetChooser = new SendableChooser<>();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -92,6 +97,11 @@ public class RobotContainer {
         "Shooter + Ingest", drivebase.getAutonomousCommand("Shooter + Ingest Auto"));
     // Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    // Standard targets
+    passTargetChooser.setDefaultOption("Right Side", new Pose2d(3.0, 6.5, new Rotation2d()));
+    passTargetChooser.addOption("Left Side", new Pose2d(3.0, 1.5, new Rotation2d()));
+    SmartDashboard.putData("Shooting Target", passTargetChooser);
 
     if (autoChooser.getSelected() == null) {
       RobotModeTriggers.autonomous()
@@ -149,16 +159,27 @@ public class RobotContainer {
 
     drivebase.registerTelemetry(logger::telemeterize);
 
-    Command shootOnMoveCommand =
+    Command hubShootOnMoveCommand =
         new ShootOnTheMoveCommand(
             shooter.turret,
             shooter.hood,
             shooter.flywheel,
             () -> drivebase.getState().Pose,
-            () -> drivebase.getState().Speeds);
+            () -> drivebase.getState().Speeds,
+            () -> getHubTarget());
+
+    Command customShootOnMoveCommand =
+        new ShootOnTheMoveCommand(
+            shooter.turret,
+            shooter.hood,
+            shooter.flywheel,
+            () -> drivebase.getState().Pose,
+            () -> drivebase.getState().Speeds,
+            () -> AllianceFlipUtil.apply(passTargetChooser.getSelected()));
 
     if (Robot.isSimulation()) {
-      driverXbox.y().whileTrue(shootOnMoveCommand);
+      driverXbox.y().whileTrue(hubShootOnMoveCommand);
+      driverXbox.b().whileTrue(customShootOnMoveCommand);
       driverXbox
           .rightBumper()
           .onFalse(intake.retract())
@@ -234,5 +255,9 @@ public class RobotContainer {
     if (brake) {
       drivebase.applyRequest(() -> this.brake);
     }
+  }
+
+  public Pose2d getHubTarget() {
+    return AllianceFlipUtil.apply(FieldConstants.BLUE_HUB);
   }
 }

@@ -55,7 +55,7 @@ public final class Constants {
   public static final class FieldConstants {
 
     // Hold time on motor brakes when disabled
-    public static final Pose2d HUB = new Pose2d(4.6, 4, Rotation2d.fromDegrees(0));
+    public static final Pose2d BLUE_HUB = new Pose2d(4.6, 4, Rotation2d.fromDegrees(0));
     public static final double FIELD_LENGTH_M = Units.inchesToMeters(651.22);
     public static final double FIELD_WIDTH_M = Units.inchesToMeters(317.69);
   }

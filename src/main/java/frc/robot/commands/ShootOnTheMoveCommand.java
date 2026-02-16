@@ -16,11 +16,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
-import frc.robot.util.AllianceFlipUtil;
 import java.util.function.Supplier;
 
 /**
@@ -39,6 +37,9 @@ public class ShootOnTheMoveCommand extends Command {
 
   /** Current field-oriented chassis speeds. */
   private final Supplier<ChassisSpeeds> fieldOrientedChassisSpeeds;
+
+  /** Target goal pose */
+  private final Supplier<Pose2d> goalPose;
 
   // Tuned Constants
   // TODO (jballock): Tune this
@@ -70,19 +71,21 @@ public class ShootOnTheMoveCommand extends Command {
    * @param flyWheel Flywheel subsystem
    * @param currentPose Current robot pose.
    * @param fieldOrientedChassisSpeeds Current field-oriented chassis speeds.
-   * @param goal Goal to shoot at.
+   * @param goalPoseSupplier Goal to shoot at.
    */
   public ShootOnTheMoveCommand(
       TurretSubsystem turret,
       HoodSubsystem hood,
       FlywheelSubsystem flyWheel,
       Supplier<Pose2d> currentPose,
-      Supplier<ChassisSpeeds> fieldOrientedChassisSpeeds) {
+      Supplier<ChassisSpeeds> fieldOrientedChassisSpeeds,
+      Supplier<Pose2d> goalPoseSupplier) {
     turretSubsystem = turret;
     hoodSubsystem = hood;
     flywheelSubsystem = flyWheel;
     robotPose = currentPose;
     this.fieldOrientedChassisSpeeds = fieldOrientedChassisSpeeds;
+    goalPose = goalPoseSupplier;
 
     setName("Shoot at hub on the move");
   }
@@ -95,11 +98,6 @@ public class ShootOnTheMoveCommand extends Command {
     // Please look here for the original authors work!
     // https://blog.eeshwark.com/robotblog/shooting-on-the-fly
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    // YASS did not come up with this
-    // -------------------------------------------------------
-
-    // Hub goal pose
-    Pose2d goalPose = AllianceFlipUtil.apply(FieldConstants.HUB);
 
     var robotSpeed = fieldOrientedChassisSpeeds.get();
     // 1. LATENCY COMP
@@ -109,7 +107,7 @@ public class ShootOnTheMoveCommand extends Command {
     Translation2d futurePos = robotPose.get().getTranslation().plus(robotVelocity);
 
     // 2. GET TARGET VECTOR
-    Translation2d goalLocation = goalPose.getTranslation();
+    Translation2d goalLocation = goalPose.get().getTranslation();
     Translation2d targetVec = goalLocation.minus(futurePos);
     double dist = targetVec.getNorm();
     Translation2d targetDirection = targetVec.div(dist);
@@ -142,13 +140,15 @@ public class ShootOnTheMoveCommand extends Command {
     double ratio = MathUtil.clamp(targetHorizFromHood / totalVelocity, 0.0, 1.0);
     double adjustedHood = Math.acos(ratio);
 
+    // 6.5. Correct field relative turret angle to robot relative
+    Rotation2d robotRelativeAngle = turretAngle.minus(robotPose.get().getRotation());
+
     // 7. SET OUTPUTS
     SmartDashboard.putNumber("Target/Turret Angle", turretAngle.getDegrees());
     SmartDashboard.putNumber("Target/Hood Angle", Math.toDegrees(adjustedHood));
     SmartDashboard.putNumber("Target/RPM", adjustedRpm);
 
-    // TODO (jballock): Respect hard limits / use proper commands
-    turretSubsystem.setAngleDirect(Degrees.of(turretAngle.getDegrees()));
+    turretSubsystem.setAngleDirect(Degrees.of(robotRelativeAngle.getDegrees()));
     hoodSubsystem.setAngleDirect(Radians.of(adjustedHood));
     flywheelSubsystem.setRPMDirect(RotationsPerSecond.of(adjustedRpm / 60));
   }
