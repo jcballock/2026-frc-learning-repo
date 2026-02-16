@@ -19,3 +19,5 @@
 - How to handle vision on a turret (counter measuring turret angle vs robot pose?)
     - Probably just use static camera
 - Add maple sim for better simulation
+- ~~easycrt (maybe?)~~
+- Hood acting weird in sim (very aggressive changes for shoot on the fly)

@@ -35,8 +35,8 @@ public class ShootOnTheMoveCommand extends Command {
   /** Current robot pose. (Blue-alliance) */
   private final Supplier<Pose2d> robotPose;
 
-  /** Current field-oriented chassis speeds. */
-  private final Supplier<ChassisSpeeds> fieldOrientedChassisSpeeds;
+  /** Current robot-oriented chassis speeds. */
+  private final Supplier<ChassisSpeeds> robotOrientedChassisSpeeds;
 
   /** Target goal pose */
   private final Supplier<Pose2d> goalPose;
@@ -48,14 +48,14 @@ public class ShootOnTheMoveCommand extends Command {
       new InterpolatingMatrixTreeMap<>();
 
   static {
-    SHOOTER_MAP.put(1.5, VecBuilder.fill(2800.0, 35.0, 0.38));
-    SHOOTER_MAP.put(2.0, VecBuilder.fill(3100.0, 38.0, 0.45));
-    SHOOTER_MAP.put(2.5, VecBuilder.fill(3400.0, 42.0, 0.52));
-    SHOOTER_MAP.put(3.0, VecBuilder.fill(3650.0, 46.0, 0.60));
-    SHOOTER_MAP.put(3.5, VecBuilder.fill(3900.0, 50.0, 0.68));
-    SHOOTER_MAP.put(4.0, VecBuilder.fill(4100.0, 54.0, 0.76));
-    SHOOTER_MAP.put(4.5, VecBuilder.fill(4350.0, 58.0, 0.85));
-    SHOOTER_MAP.put(5.0, VecBuilder.fill(4550.0, 62.0, 0.94));
+    SHOOTER_MAP.put(1.5, VecBuilder.fill(2800.0, 62.0, 0.38));
+    SHOOTER_MAP.put(2.0, VecBuilder.fill(3100.0, 58.0, 0.45));
+    SHOOTER_MAP.put(2.5, VecBuilder.fill(3400.0, 54.0, 0.52));
+    SHOOTER_MAP.put(3.0, VecBuilder.fill(3650.0, 50.0, 0.60));
+    SHOOTER_MAP.put(3.5, VecBuilder.fill(3900.0, 49.0, 0.68));
+    SHOOTER_MAP.put(4.0, VecBuilder.fill(4100.0, 47.0, 0.76));
+    SHOOTER_MAP.put(4.5, VecBuilder.fill(4350.0, 46.0, 0.85));
+    SHOOTER_MAP.put(5.0, VecBuilder.fill(4550.0, 45.0, 0.94));
   }
 
   /**
@@ -70,7 +70,7 @@ public class ShootOnTheMoveCommand extends Command {
    * @param hood Hood subsystem
    * @param flyWheel Flywheel subsystem
    * @param currentPose Current robot pose.
-   * @param fieldOrientedChassisSpeeds Current field-oriented chassis speeds.
+   * @param robotOrientedChassisSpeeds Current robot-oriented chassis speeds.
    * @param goalPoseSupplier Goal to shoot at.
    */
   public ShootOnTheMoveCommand(
@@ -78,13 +78,13 @@ public class ShootOnTheMoveCommand extends Command {
       HoodSubsystem hood,
       FlywheelSubsystem flyWheel,
       Supplier<Pose2d> currentPose,
-      Supplier<ChassisSpeeds> fieldOrientedChassisSpeeds,
+      Supplier<ChassisSpeeds> robotOrientedChassisSpeeds,
       Supplier<Pose2d> goalPoseSupplier) {
     turretSubsystem = turret;
     hoodSubsystem = hood;
     flywheelSubsystem = flyWheel;
     robotPose = currentPose;
-    this.fieldOrientedChassisSpeeds = fieldOrientedChassisSpeeds;
+    this.robotOrientedChassisSpeeds = robotOrientedChassisSpeeds;
     goalPose = goalPoseSupplier;
 
     setName("Shoot at hub on the move");
@@ -99,12 +99,16 @@ public class ShootOnTheMoveCommand extends Command {
     // https://blog.eeshwark.com/robotblog/shooting-on-the-fly
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    var robotSpeed = fieldOrientedChassisSpeeds.get();
+    var robotSpeed = robotOrientedChassisSpeeds.get();
     // 1. LATENCY COMP
     Translation2d robotVelocity =
-        new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond)
-            .times(latency);
-    Translation2d futurePos = robotPose.get().getTranslation().plus(robotVelocity);
+        new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
+    //         .times(latency);
+    // Translation2d futurePos = robotPose.get().getTranslation().plus(robotVelocity);
+
+    Translation2d robotVelFieldFrame = robotVelocity.rotateBy(robotPose.get().getRotation());
+    Translation2d futurePos =
+        robotPose.get().getTranslation().plus(robotVelFieldFrame.times(latency));
 
     // 2. GET TARGET VECTOR
     Translation2d goalLocation = goalPose.get().getTranslation();
@@ -120,7 +124,7 @@ public class ShootOnTheMoveCommand extends Command {
     Translation2d targetVelocity = targetDirection.times(baselineVelocity);
 
     // 5. THE MAGIC: subtract robot velocity
-    Translation2d shotVelocity = targetVelocity.minus(robotVelocity);
+    Translation2d shotVelocity = targetVelocity.minus(robotVelFieldFrame);
 
     // 6. Extract results
     Rotation2d turretAngle = shotVelocity.getAngle();

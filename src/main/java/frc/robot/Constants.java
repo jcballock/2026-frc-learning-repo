@@ -13,6 +13,7 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -105,6 +106,10 @@ public final class Constants {
     // ID
     public static final int ID = 36;
 
+    // CANcoder
+    public static final int CANCODER_ID = 40;
+    public static final CANcoderConfiguration CANCODER_CONFIG = new CANcoderConfiguration();
+
     // Turret Properties
     public static final Mass MASS = Mass.ofBaseUnits(2, Pounds);
     public static final Distance LENGTH = Distance.ofBaseUnits(7, Inches);
@@ -116,17 +121,20 @@ public final class Constants {
     public static final Angle SOFT_MIN_ANGLE = Degrees.of(-90);
     public static final Angle SOFT_MAX_ANGLE = Degrees.of(90);
     public static final MechanismGearing GEARING =
-        new MechanismGearing(GearBox.fromReductionStages(3, 4));
+        new MechanismGearing(GearBox.fromReductionStages(40));
+
+    // CRT
+    public static final double MATCH_TOLERANCE = 0.01;
 
     // Turret PID
     public static final ProfiledPIDController PID_CONTROLLER =
         new ProfiledPIDController(
-            45,
+            150,
             0,
-            0,
+            0.25,
             new Constraints(
-                DegreesPerSecond.of(180).in(RotationsPerSecond),
-                DegreesPerSecondPerSecond.of(120).in(RotationsPerSecondPerSecond)));
+                DegreesPerSecond.of(360).in(RotationsPerSecond),
+                DegreesPerSecondPerSecond.of(360).in(RotationsPerSecondPerSecond)));
   }
 
   public static class FlywheelConstants {

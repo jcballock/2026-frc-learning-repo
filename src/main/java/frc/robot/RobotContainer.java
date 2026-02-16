@@ -165,7 +165,7 @@ public class RobotContainer {
             shooter.hood,
             shooter.flywheel,
             () -> drivebase.getState().Pose,
-            () -> drivebase.getState().Speeds,
+            () -> drivebase.getState().Speeds, // Robot centric not field oriented
             () -> getHubTarget());
 
     Command customShootOnMoveCommand =
