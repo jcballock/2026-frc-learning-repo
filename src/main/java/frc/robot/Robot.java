@@ -4,10 +4,8 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -152,23 +150,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {
-    m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-    /* Run simulation at a faster rate so PID gains behave more reasonably */
-    m_simNotifier =
-        new Notifier(
-            () -> {
-              final double currentTime = Utils.getCurrentTimeSeconds();
-              double deltaTime = currentTime - m_lastSimTime;
-              m_lastSimTime = currentTime;
-
-              /* Use the measured time delta, get battery voltage from WPILib */
-              m_robotContainer.drivebase.updateSimState(
-                  deltaTime, RobotController.getBatteryVoltage());
-            });
-    m_simNotifier.startPeriodic(kSimLoopPeriod);
-  }
+  public void simulationInit() {}
 
   /** This function is called periodically whilst in simulation. */
   @Override

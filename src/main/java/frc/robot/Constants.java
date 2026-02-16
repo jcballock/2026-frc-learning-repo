@@ -84,9 +84,9 @@ public final class Constants {
     public static final Distance LENGTH = Distance.ofBaseUnits(7, Inches);
     public static final MomentOfInertia M_OF_INERTIA =
         MomentOfInertia.ofBaseUnits(0.00488, KilogramSquareMeters);
-    public static final Angle START_ANGLE = Angle.ofBaseUnits(0, Degrees);
-    public static final Angle MIN_ANGLE = Angle.ofBaseUnits(0, Degrees);
-    public static final Angle MAX_ANGLE = Angle.ofBaseUnits(120, Degrees);
+    public static final Angle START_ANGLE = Degrees.of(0);
+    public static final Angle MIN_ANGLE = Degrees.of(0);
+    public static final Angle MAX_ANGLE = Degrees.of(120);
     public static final MechanismGearing GEARING =
         new MechanismGearing(GearBox.fromReductionStages(3, 4));
 
@@ -110,11 +110,11 @@ public final class Constants {
     public static final Distance LENGTH = Distance.ofBaseUnits(7, Inches);
     public static final MomentOfInertia M_OF_INERTIA =
         MomentOfInertia.ofBaseUnits(0.00956, KilogramSquareMeters);
-    public static final Angle START_ANGLE = Angle.ofBaseUnits(0, Degrees);
-    public static final Angle MIN_ANGLE = Angle.ofBaseUnits(-135, Degrees);
-    public static final Angle MAX_ANGLE = Angle.ofBaseUnits(135, Degrees);
-    public static final Angle SOFT_MIN_ANGLE = Angle.ofBaseUnits(-130, Degrees);
-    public static final Angle SOFT_MAX_ANGLE = Angle.ofBaseUnits(130, Degrees);
+    public static final Angle START_ANGLE = Degrees.of(0);
+    public static final Angle MIN_ANGLE = Degrees.of(-95);
+    public static final Angle MAX_ANGLE = Degrees.of(95);
+    public static final Angle SOFT_MIN_ANGLE = Degrees.of(-90);
+    public static final Angle SOFT_MAX_ANGLE = Degrees.of(90);
     public static final MechanismGearing GEARING =
         new MechanismGearing(GearBox.fromReductionStages(3, 4));
 
@@ -145,9 +145,9 @@ public final class Constants {
     public static final Distance LENGTH = Distance.ofBaseUnits(14.5, Inches);
     public static final MomentOfInertia M_OF_INERTIA =
         MomentOfInertia.ofBaseUnits(0.01438, KilogramSquareMeters);
-    public static final Angle START_ANGLE = Angle.ofBaseUnits(90, Degrees);
-    public static final Angle MIN_ANGLE = Angle.ofBaseUnits(-20, Degrees);
-    public static final Angle MAX_ANGLE = Angle.ofBaseUnits(100, Degrees);
+    public static final Angle START_ANGLE = Degrees.of(90);
+    public static final Angle MIN_ANGLE = Degrees.of(-20);
+    public static final Angle MAX_ANGLE = Degrees.of(100);
     public static final MechanismGearing GEARING =
         new MechanismGearing(GearBox.fromReductionStages(4, 4));
 
