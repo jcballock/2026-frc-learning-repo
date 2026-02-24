@@ -17,6 +17,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -298,6 +299,13 @@ public class SwerveSubystem extends TunerSwerveDrivetrain implements Subsystem {
   @Override
   public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
     return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
+  }
+
+  public Pose2d getChassisSpeedsFieldRelative() {
+    ChassisSpeeds res =
+        ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().RawHeading);
+    return new Pose2d(
+        res.vxMetersPerSecond, res.vyMetersPerSecond, new Rotation2d(res.omegaRadiansPerSecond));
   }
 
   /**

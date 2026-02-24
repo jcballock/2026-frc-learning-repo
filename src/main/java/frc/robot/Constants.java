@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -43,6 +44,15 @@ public final class Constants {
       new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
 
   public static final double LOOP_TIME = 0.13;
+
+  // Sim stuff
+  public static Translation2d robotToTurret =
+      // new Translation2d(
+      //     Units.inchesToMeters(Math.hypot(6.745, 5.75)),
+      //     Rotation2d.fromDegrees(-30.0)); // 6.745, -5.75
+      new Translation2d(Units.inchesToMeters(-6.745), Units.inchesToMeters(-5.750));
+  public static Translation2d HUB_POSITION =
+      new Translation2d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.84));
 
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 

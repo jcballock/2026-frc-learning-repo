@@ -48,14 +48,17 @@ public class ShootOnTheMoveCommand extends Command {
       new InterpolatingMatrixTreeMap<>();
 
   static {
-    SHOOTER_MAP.put(1.5, VecBuilder.fill(2800.0, 62.0, 0.38));
-    SHOOTER_MAP.put(2.0, VecBuilder.fill(3100.0, 58.0, 0.45));
-    SHOOTER_MAP.put(2.5, VecBuilder.fill(3400.0, 54.0, 0.52));
-    SHOOTER_MAP.put(3.0, VecBuilder.fill(3650.0, 50.0, 0.60));
-    SHOOTER_MAP.put(3.5, VecBuilder.fill(3900.0, 49.0, 0.68));
-    SHOOTER_MAP.put(4.0, VecBuilder.fill(4100.0, 47.0, 0.76));
-    SHOOTER_MAP.put(4.5, VecBuilder.fill(4350.0, 46.0, 0.85));
-    SHOOTER_MAP.put(5.0, VecBuilder.fill(4550.0, 45.0, 0.94));
+    SHOOTER_MAP.put(1.5, VecBuilder.fill(2400.0, 70.0, 0.38));
+    SHOOTER_MAP.put(2.0, VecBuilder.fill(2500.0, 65.0, 0.45));
+    SHOOTER_MAP.put(2.5, VecBuilder.fill(2550.0, 63.0, 0.52));
+    SHOOTER_MAP.put(3.0, VecBuilder.fill(2650.0, 59.0, 0.60));
+    SHOOTER_MAP.put(3.5, VecBuilder.fill(2850.0, 57.0, 0.68));
+    SHOOTER_MAP.put(4.0, VecBuilder.fill(3000.0, 54.0, 0.76));
+    SHOOTER_MAP.put(4.5, VecBuilder.fill(3250.0, 51.0, 0.85));
+    SHOOTER_MAP.put(5.0, VecBuilder.fill(3400.0, 49.0, 0.94));
+    SHOOTER_MAP.put(5.5, VecBuilder.fill(3550.0, 47.0, 0.96));
+    SHOOTER_MAP.put(6.0, VecBuilder.fill(3650.0, 46.0, 0.98));
+    SHOOTER_MAP.put(7.0, VecBuilder.fill(3750.0, 45.0, 1.01));
   }
 
   /**

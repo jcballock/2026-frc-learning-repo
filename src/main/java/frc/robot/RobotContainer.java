@@ -27,6 +27,7 @@ import frc.robot.generated.SwerveTunerConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SerializerSubystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShootingSimulation;
 import frc.robot.subsystems.SwerveSubystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.AllianceFlipUtil;
@@ -75,6 +76,9 @@ public class RobotContainer {
   // Class for intake
   public SerializerSubystem serializer = new SerializerSubystem();
 
+  // Simulation subsystem
+  public ShootingSimulation sim;
+
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
   // selection of desired auto
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -120,6 +124,13 @@ public class RobotContainer {
    */
   private void configureBindings() {
     if (Robot.isSimulation()) {
+      sim =
+          new ShootingSimulation(
+              () -> drivebase.getState().Pose,
+              drivebase::getChassisSpeedsFieldRelative,
+              shooter.turret::getAngle,
+              shooter.hood::getAngle,
+              shooter.flywheel::getLinearVelocity);
       drivebase.setDefaultCommand(
           // Drivetrain will execute this command periodically
           drivebase.applyRequest(

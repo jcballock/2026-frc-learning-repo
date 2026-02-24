@@ -73,6 +73,10 @@ public class FlywheelSubsystem extends SubsystemBase {
     return flywheel.getSpeed();
   }
 
+  public LinearVelocity getLinearVelocity() {
+    return flywheel.getLinearVelocity();
+  }
+
   public Command setVelocity(AngularVelocity speed) {
     return flywheel.setSpeed(speed);
   }

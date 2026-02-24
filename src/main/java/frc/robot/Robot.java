@@ -133,8 +133,10 @@ public class Robot extends TimedRobot {
     // Get last estimated global pose
     EstimatedRobotPose pose = m_robotContainer.vision.getLatestPose();
     if (pose != null) {
-      m_robotContainer.drivebase.addVisionMeasurement(
-          pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+      if (!Robot.isSimulation()) {
+        m_robotContainer.drivebase.addVisionMeasurement(
+            pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+      }
     }
   }
 
