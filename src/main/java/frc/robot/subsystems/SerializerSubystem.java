@@ -10,12 +10,12 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeArmConstants;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.SerializerConstants;
 
 public class SerializerSubystem extends SubsystemBase {
-  private final TalonFX kickerMotor = new TalonFX(IntakeArmConstants.ID);
-  private final TalonFX serializerMotor = new TalonFX(IntakeConstants.ID);
+  private final TalonFX topKickerMotor = new TalonFX(SerializerConstants.TOP_KICKER_ID);
+  private final TalonFX bottomKickerMotor = new TalonFX(SerializerConstants.TOP_KICKER_ID);
+  private final TalonFX serializerMotor = new TalonFX(SerializerConstants.INDEXER_ID);
 
   private static final double kickerMotorSimGearRatio = 10.0;
   private final DCMotorSim kickerMotorSim =
@@ -40,12 +40,15 @@ public class SerializerSubystem extends SubsystemBase {
 
   // Speed is between -1.0 and 1.0
   public Command serializeAndKick(double speed) {
-    return runOnce(() -> serializerMotor.set(speed)).andThen(() -> kickerMotor.set(speed));
+    return runOnce(() -> serializerMotor.set(speed))
+        .andThen(() -> topKickerMotor.set(speed))
+        .andThen(() -> bottomKickerMotor.set(speed));
   }
 
   public Command stopSerialize() {
     return runOnce(() -> serializerMotor.setControl(new NeutralOut()))
-        .andThen(() -> kickerMotor.setControl(new NeutralOut()));
+        .andThen(() -> topKickerMotor.setControl(new NeutralOut()))
+        .andThen(() -> bottomKickerMotor.setControl(new NeutralOut()));
   }
 
   @Override
@@ -62,7 +65,7 @@ public class SerializerSubystem extends SubsystemBase {
     serializerSim.setRotorVelocity(
         serializerMotorSim.getAngularVelocity().times(serializerMotorSimGearRatio));
 
-    var kickerSim = kickerMotor.getSimState();
+    var kickerSim = topKickerMotor.getSimState();
     kickerSim.setSupplyVoltage(RobotController.getBatteryVoltage());
     kickerMotorSim.setInputVoltage(kickerSim.getMotorVoltageMeasure().in(Volts));
     kickerMotorSim.update(0.020); // assume 20 ms loop time

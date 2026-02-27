@@ -88,7 +88,7 @@ public final class Constants {
 
   public static class HoodConstants {
     // ID
-    public static final int ID = 35;
+    public static final int ID = 27;
 
     // Hood Properties
     public static final Mass MASS = Mass.ofBaseUnits(2, Pounds);
@@ -114,10 +114,10 @@ public final class Constants {
 
   public static class TurretConstants {
     // ID
-    public static final int ID = 36;
+    public static final int ID = 25;
 
     // CANcoder
-    public static final int CANCODER_ID = 40;
+    public static final int CANCODER_ID = 26;
     public static final CANcoderConfiguration CANCODER_CONFIG = new CANcoderConfiguration();
 
     // Turret Properties
@@ -131,7 +131,7 @@ public final class Constants {
     public static final Angle SOFT_MIN_ANGLE = Degrees.of(-90);
     public static final Angle SOFT_MAX_ANGLE = Degrees.of(90);
     public static final MechanismGearing GEARING =
-        new MechanismGearing(GearBox.fromReductionStages(40));
+        new MechanismGearing(GearBox.fromReductionStages(45.45));
 
     // CRT
     public static final double MATCH_TOLERANCE = 0.01;
@@ -149,14 +149,14 @@ public final class Constants {
 
   public static class FlywheelConstants {
     // ID
-    public static final int ID = 37;
+    public static final int ID = 28;
 
     // TODO
   }
 
   public static class IntakeArmConstants {
     // ID
-    public static final int ID = 38;
+    public static final int ID = 20;
 
     // Intake Arm Properties
     public static final Mass MASS = Mass.ofBaseUnits(7, Pounds);
@@ -167,14 +167,14 @@ public final class Constants {
     public static final Angle MIN_ANGLE = Degrees.of(-20);
     public static final Angle MAX_ANGLE = Degrees.of(100);
     public static final MechanismGearing GEARING =
-        new MechanismGearing(GearBox.fromReductionStages(4, 4));
+        new MechanismGearing(GearBox.fromReductionStages(0.44));
 
     // Intake Arm PID
     public static final ProfiledPIDController PID_CONTROLLER =
         new ProfiledPIDController(
-            10.0,
+            20.0,
             0,
-            0,
+            3.0,
             new Constraints(
                 DegreesPerSecond.of(360).in(RotationsPerSecond),
                 DegreesPerSecondPerSecond.of(280).in(RotationsPerSecondPerSecond)));
@@ -182,6 +182,12 @@ public final class Constants {
 
   public static class IntakeConstants {
     // ID
-    public static final int ID = 39;
+    public static final int ID = 21;
+  }
+
+  public static class SerializerConstants {
+    public static final int TOP_KICKER_ID = 24;
+    public static final int BOTTOM_KICKER_ID = 23;
+    public static final int INDEXER_ID = 22;
   }
 }
