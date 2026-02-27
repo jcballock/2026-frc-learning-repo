@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 
 /**
@@ -131,12 +133,17 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Get last estimated global pose
-    EstimatedRobotPose pose = m_robotContainer.vision.getLatestPose();
-    if (pose != null) {
-      if (!Robot.isSimulation()) {
+    int idx = 0;
+    for (Optional<EstimatedRobotPose> latestPose : m_robotContainer.vision.getLatestPoses()) {
+      if (latestPose.isPresent()) {
+        SmartDashboard.putNumber(
+            "PoseX from Camera" + idx, latestPose.get().estimatedPose.toPose2d().getX());
+        SmartDashboard.putNumber(
+            "PoseY from Camera" + idx, latestPose.get().estimatedPose.toPose2d().getY());
         m_robotContainer.drivebase.addVisionMeasurement(
-            pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+            latestPose.get().estimatedPose.toPose2d(), latestPose.get().timestampSeconds);
       }
+      idx++;
     }
   }
 
