@@ -143,7 +143,7 @@ public final class Constants {
             0,
             0.25,
             new Constraints(
-                DegreesPerSecond.of(360).in(RotationsPerSecond),
+                DegreesPerSecond.of(720).in(RotationsPerSecond),
                 DegreesPerSecondPerSecond.of(360).in(RotationsPerSecondPerSecond)));
   }
 

@@ -127,6 +127,9 @@ public class Robot extends TimedRobot {
     } else {
       CommandScheduler.getInstance().cancelAll();
     }
+
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    m_robotContainer.configureBindings();
   }
 
   /** This function is called periodically during operator control. */
@@ -150,7 +153,9 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
     CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.configureTestBindings();
   }
 
   /** This function is called periodically during test mode. */

@@ -122,7 +122,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
+  public void configureBindings() {
     if (Robot.isSimulation()) {
       sim =
           new ShootingSimulation(
@@ -210,46 +210,93 @@ public class RobotContainer {
           .onFalse(shooter.turret.setDutyCycle(0.0))
           .whileTrue(shooter.turret.setDutyCycle(-0.125));
     }
-    if (DriverStation.isTest()) {
-      // Buttons for intake testing
-      driverXbox.a().onFalse(intake.rawIntakeControl(0.0)).whileTrue(intake.rawIntakeControl(0.25));
-      driverXbox.b().onFalse(intake.rawArmControl(0.0)).whileTrue(intake.rawArmControl(0.125));
 
-      // Button for serializer
-      driverXbox.x().onFalse(serializer.stopSerialize()).whileTrue(serializer.serialize(0.25));
+    // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    driverXbox.start().whileTrue(Commands.none());
+    driverXbox.back().whileTrue(Commands.none());
+    // driverXbox.rightBumper().onTrue(Commands.none());
+  }
 
-      // Buttons for turret
-      driverXbox
-          .rightBumper()
-          .onFalse(shooter.turret.setDutyCycle(0.0))
-          .whileTrue(shooter.turret.setDutyCycle(0.125));
-      driverXbox
-          .leftBumper()
-          .onFalse(shooter.turret.setDutyCycle(0.0))
-          .whileTrue(shooter.turret.setDutyCycle(-0.125));
-
-      // Button for flywheel
-      driverXbox
-          .y()
-          .onFalse(shooter.flywheel.setDutyCycle(0.0))
-          .whileTrue(shooter.flywheel.setDutyCycle(0.25));
-
-      // Button for hood
-      driverXbox
-          .rightTrigger()
-          .onFalse(shooter.hood.setDutyCycle(0.0))
-          .whileTrue(shooter.hood.setDutyCycle(0.125));
-      driverXbox
-          .leftTrigger()
-          .onFalse(shooter.hood.setDutyCycle(0.0))
-          .whileTrue(shooter.hood.setDutyCycle(-0.125));
+  public void configureTestBindings() {
+    if (Robot.isSimulation()) {
+      sim =
+          new ShootingSimulation(
+              () -> drivebase.getState().Pose,
+              drivebase::getChassisSpeedsFieldRelative,
+              shooter.turret::getAngle,
+              shooter.hood::getAngle,
+              shooter.flywheel::getLinearVelocity);
+      drivebase.setDefaultCommand(
+          // Drivetrain will execute this command periodically
+          drivebase.applyRequest(
+              () ->
+                  drive
+                      .withVelocityX(-driverXbox.getLeftX() * MaxSpeed)
+                      .withVelocityY(driverXbox.getLeftY() * MaxSpeed)
+                      .withRotationalRate(
+                          driverXbox.getRightX()
+                              * MaxAngularRate) // Drive counterclockwise with negative X (left)
+              ));
 
     } else {
-      // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
-      // driverXbox.rightBumper().onTrue(Commands.none());
+      // Note that X is defined as forward according to WPILib convention,
+      // and Y is defined as to the left according to WPILib convention.
+      drivebase.setDefaultCommand(
+          // Drivetrain will execute this command periodically
+          drivebase.applyRequest(
+              () ->
+                  drive
+                      .withVelocityX(
+                          -driverXbox.getLeftY()
+                              * MaxSpeed) // Drive forward with negative Y (forward)
+                      .withVelocityY(
+                          -driverXbox.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                      .withRotationalRate(
+                          -driverXbox.getRightX()
+                              * MaxAngularRate) // Drive counterclockwise with negative X (left)
+              ));
     }
+
+    // Idle while the robot is disabled. This ensures the configured
+    // neutral mode is applied to the drive motors while disabled.
+    final var idle = new SwerveRequest.Idle();
+    RobotModeTriggers.disabled()
+        .whileTrue(drivebase.applyRequest(() -> idle).ignoringDisable(true));
+
+    drivebase.registerTelemetry(logger::telemeterize);
+
+    // Buttons for intake testing
+    driverXbox.a().onFalse(intake.rawIntakeControl(0.0)).whileTrue(intake.rawIntakeControl(0.25));
+    driverXbox.b().onFalse(intake.rawArmControl(0.0)).whileTrue(intake.rawArmControl(0.125));
+
+    // Button for serializer
+    driverXbox.x().onFalse(serializer.stopSerialize()).whileTrue(serializer.serialize(0.25));
+
+    // Buttons for turret
+    driverXbox
+        .rightBumper()
+        .onFalse(shooter.turret.setDutyCycle(0.0))
+        .whileTrue(shooter.turret.setDutyCycle(0.125));
+    driverXbox
+        .leftBumper()
+        .onFalse(shooter.turret.setDutyCycle(0.0))
+        .whileTrue(shooter.turret.setDutyCycle(-0.125));
+
+    // Button for flywheel
+    driverXbox
+        .y()
+        .onFalse(shooter.flywheel.setDutyCycle(0.0))
+        .whileTrue(shooter.flywheel.setDutyCycle(0.25));
+
+    // Button for hood
+    driverXbox
+        .rightTrigger()
+        .onFalse(shooter.hood.setDutyCycle(0.0))
+        .whileTrue(shooter.hood.setDutyCycle(0.125));
+    driverXbox
+        .leftTrigger()
+        .onFalse(shooter.hood.setDutyCycle(0.0))
+        .whileTrue(shooter.hood.setDutyCycle(-0.125));
   }
 
   /**
