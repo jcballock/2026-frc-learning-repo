@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
@@ -95,21 +96,21 @@ public final class Constants {
     public static final Distance LENGTH = Distance.ofBaseUnits(7, Inches);
     public static final MomentOfInertia M_OF_INERTIA =
         MomentOfInertia.ofBaseUnits(0.00488, KilogramSquareMeters);
-    public static final Angle START_ANGLE = Degrees.of(0);
-    public static final Angle MIN_ANGLE = Degrees.of(0);
-    public static final Angle MAX_ANGLE = Degrees.of(120);
+    public static final Angle START_ANGLE = Degrees.of(22);
+    public static final Angle MIN_ANGLE = Degrees.of(22);
+    public static final Angle MAX_ANGLE = Degrees.of(60);
     public static final MechanismGearing GEARING =
-        new MechanismGearing(GearBox.fromReductionStages(3, 4));
+        new MechanismGearing(GearBox.fromReductionStages(144.9, 1));
 
     // Hood PID
     public static final ProfiledPIDController PID_CONTROLLER =
         new ProfiledPIDController(
-            20.0,
+            130.0,
             0,
-            0,
+            0.35,
             new Constraints(
-                DegreesPerSecond.of(180).in(RotationsPerSecond),
-                DegreesPerSecondPerSecond.of(90).in(RotationsPerSecondPerSecond)));
+                RPM.of(2000).in(RotationsPerSecond),
+                RotationsPerSecondPerSecond.of(50).in(RotationsPerSecondPerSecond)));
   }
 
   public static class TurretConstants {
@@ -126,10 +127,10 @@ public final class Constants {
     public static final MomentOfInertia M_OF_INERTIA =
         MomentOfInertia.ofBaseUnits(0.00956, KilogramSquareMeters);
     public static final Angle START_ANGLE = Degrees.of(0);
-    public static final Angle MIN_ANGLE = Degrees.of(-95);
-    public static final Angle MAX_ANGLE = Degrees.of(95);
-    public static final Angle SOFT_MIN_ANGLE = Degrees.of(-90);
-    public static final Angle SOFT_MAX_ANGLE = Degrees.of(90);
+    public static final Angle MIN_ANGLE = Degrees.of(-99.5);
+    public static final Angle MAX_ANGLE = Degrees.of(99.5);
+    public static final Angle SOFT_MIN_ANGLE = Degrees.of(-95);
+    public static final Angle SOFT_MAX_ANGLE = Degrees.of(95);
     public static final MechanismGearing GEARING =
         new MechanismGearing(GearBox.fromReductionStages(45.45));
 
@@ -139,12 +140,12 @@ public final class Constants {
     // Turret PID
     public static final ProfiledPIDController PID_CONTROLLER =
         new ProfiledPIDController(
-            150,
+            32,
             0,
             0.25,
             new Constraints(
-                DegreesPerSecond.of(720).in(RotationsPerSecond),
-                DegreesPerSecondPerSecond.of(360).in(RotationsPerSecondPerSecond)));
+                RPM.of(1000).in(RotationsPerSecond),
+                RotationsPerSecondPerSecond.of(20).in(RotationsPerSecondPerSecond)));
   }
 
   public static class FlywheelConstants {

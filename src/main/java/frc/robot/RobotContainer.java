@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -276,27 +277,27 @@ public class RobotContainer {
     driverXbox
         .rightBumper()
         .onFalse(shooter.turret.setDutyCycle(0.0))
-        .whileTrue(shooter.turret.setDutyCycle(0.125));
+        .whileTrue(shooter.turret.setAngle(Degrees.of(60)));
     driverXbox
         .leftBumper()
         .onFalse(shooter.turret.setDutyCycle(0.0))
-        .whileTrue(shooter.turret.setDutyCycle(-0.125));
+        .whileTrue(shooter.turret.setAngle(Degrees.of(-60)));
 
     // Button for flywheel
     driverXbox
         .y()
-        .onFalse(shooter.flywheel.setDutyCycle(0.0))
-        .whileTrue(shooter.flywheel.setDutyCycle(0.25));
+        .onFalse(shooter.flywheel.setVelocity(RPM.of(1000)))
+        .whileTrue(shooter.flywheel.setVelocity(RPM.of(3000)));
 
     // Button for hood
     driverXbox
         .rightTrigger()
         .onFalse(shooter.hood.setDutyCycle(0.0))
-        .whileTrue(shooter.hood.setDutyCycle(0.125));
+        .whileTrue(shooter.hood.setAngle(Degrees.of(50)));
     driverXbox
         .leftTrigger()
         .onFalse(shooter.hood.setDutyCycle(0.0))
-        .whileTrue(shooter.hood.setDutyCycle(-0.125));
+        .whileTrue(shooter.hood.setAngle(Degrees.of(25)));
   }
 
   /**
